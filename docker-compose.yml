@@ -1,11 +1,27 @@
 version: '2.2'
 
 services:
+  db:
+    image: mariadb:10
+    container_name: wpdemo-db
+    restart: always
+    #volumes:
+    #  - db_data:/var/lib/mysql
+    #  - ./backups:/backups
+    environment:
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+      MYSQL_ALLOW_EMPTY_PASSWORD: "${MYSQL_ALLOW_EMPTY_PASSWORD}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      
   wordpress:
     image: wordpress:latest
     container_name: wpdemo-wp
     restart: always
     ports: ['80:80']
+    depends_on: ['db']
+    links: ['db:db']
     volumes:
       - './wp-data:/var/www/html'
     environment:
